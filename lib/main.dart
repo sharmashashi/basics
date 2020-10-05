@@ -8,7 +8,7 @@ void main() {
       debugShowCheckedModeBanner: false,
       routes: {
         "/login": (context) => LoginPage(),
-        "/homepage": (context) => HomePage(),
+        // "/homepage": (context) => HomePage(),
         "/thirdpage": (context) => ThirdPage()
       },
       initialRoute: "/login",

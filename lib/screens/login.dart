@@ -57,11 +57,9 @@ class LoginPage extends StatelessWidget {
           ),
           color: Colors.green,
           onPressed: () {
-            print("before ");
             // Navigator.pushNamed(context, "/homepage");
             Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => HomePage()));
-            print("pressed");
+                .push(MaterialPageRoute(builder: (context) => HomePage("from login")));
           },
         ),
       ),
