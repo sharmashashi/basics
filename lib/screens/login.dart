@@ -1,7 +1,11 @@
 import 'package:firstproject/screens/homepage.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatelessWidget {
+  TextEditingController idController = TextEditingController();
+  TextEditingController pdController = TextEditingController();
+
   Image logoBuilder() {
     return Image.asset(
       "assets/eSewa-Nepal.png",
@@ -28,7 +32,8 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget inputFieldBuilder(String label) {
+  Widget inputFieldBuilder(String label,
+      {@required TextEditingController controller}) {
     return Padding(
       padding: EdgeInsets.only(top: 15),
       child: Column(
@@ -39,7 +44,10 @@ class LoginPage extends StatelessWidget {
             style: TextStyle(
                 color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          TextField()
+          TextField(
+            controller: controller,
+            obscureText: label == "Password/MPIN" ? true : false,
+          )
         ],
       ),
     );
@@ -56,14 +64,39 @@ class LoginPage extends StatelessWidget {
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           color: Colors.green,
-          onPressed: () {
-            // Navigator.pushNamed(context, "/homepage");
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => HomePage("from login")));
+          onPressed: () async {
+            String id = idController.text;
+            String pwd = pdController.text;
+
+            if (idController.text != '' && pdController.text != '') {
+              await saveDataToLocal(id: id, pwd: pwd);
+
+              // Navigator.pushNamed(context, "/homepage");
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => HomePage("from login")));
+            } else {
+              showDialog(
+                barrierDismissible: true,
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      
+                      content: Text('please fill both fields'),
+                    );
+                  });
+            }
           },
         ),
       ),
     );
+  }
+
+  Future<bool> saveDataToLocal(
+      {@required String id, @required String pwd}) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    bool savedId = await pref.setString("id", id);
+    bool savedpwd = await pref.setString("password", pwd);
+    return true;
   }
 
   @override
@@ -75,8 +108,8 @@ class LoginPage extends StatelessWidget {
         children: [
           Padding(padding: EdgeInsets.only(top: 50), child: logoBuilder()),
           Padding(padding: EdgeInsets.only(top: 20), child: greeting()),
-          inputFieldBuilder("Esewa ID(Mobile/Email"),
-          inputFieldBuilder("Password/MPIN"),
+          inputFieldBuilder("Esewa ID(Mobile/Email", controller: idController),
+          inputFieldBuilder("Password/MPIN", controller: pdController),
           loginButton(context)
         ],
       ),
