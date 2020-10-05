@@ -1,4 +1,5 @@
 import 'package:firstproject/screens/homepage.dart';
+import 'package:firstproject/screens/registration.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -76,11 +77,10 @@ class LoginPage extends StatelessWidget {
                   builder: (context) => HomePage("from login")));
             } else {
               showDialog(
-                barrierDismissible: true,
+                  barrierDismissible: true,
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      
                       content: Text('please fill both fields'),
                     );
                   });
@@ -110,7 +110,23 @@ class LoginPage extends StatelessWidget {
           Padding(padding: EdgeInsets.only(top: 20), child: greeting()),
           inputFieldBuilder("Esewa ID(Mobile/Email", controller: idController),
           inputFieldBuilder("Password/MPIN", controller: pdController),
-          loginButton(context)
+          loginButton(context),
+          Center(
+            child: Padding(
+                padding: EdgeInsets.only(top: 20),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Registration()));
+                  },
+                  child: Text(
+                    "Register now",
+                    style: TextStyle(color: Colors.blue, fontSize: 18),
+                  ),
+                )),
+          ),
         ],
       ),
     );
