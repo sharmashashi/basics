@@ -15,28 +15,31 @@ class LoginPage extends StatelessWidget {
   }
 
   Widget greeting() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Welcome,',
-          style: TextStyle(
-              color: Colors.grey, fontSize: 25, fontWeight: FontWeight.w600),
-        ),
-        Text(
-          'Sign in to continue',
-          style: TextStyle(
-            color: Colors.grey,
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Welcome,',
+            style: TextStyle(
+                color: Colors.grey, fontSize: 25, fontWeight: FontWeight.w600),
           ),
-        ),
-      ],
+          Text(
+            'Sign in to continue',
+            style: TextStyle(
+              color: Colors.grey,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget inputFieldBuilder(String label,
-      {@required TextEditingController controller}) {
+      {@required TextEditingController controller, @required isEmail}) {
     return Padding(
-      padding: EdgeInsets.only(top: 15),
+      padding: EdgeInsets.only(top: 15, left: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -45,7 +48,18 @@ class LoginPage extends StatelessWidget {
             style: TextStyle(
                 color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          TextField(
+          TextFormField(
+            autovalidate: true,
+            validator: isEmail == true
+                ? (val) {
+                    bool validate;
+                    if (val.contains("@"))
+                      validate = true;
+                    else
+                      validate = false;
+                    return validate ? null : "Invalid email";
+                  }
+                : (val) {},
             controller: controller,
             obscureText: label == "Password/MPIN" ? true : false,
           )
@@ -70,11 +84,22 @@ class LoginPage extends StatelessWidget {
             String pwd = pdController.text;
 
             if (idController.text != '' && pdController.text != '') {
-              await saveDataToLocal(id: id, pwd: pwd);
+              SharedPreferences pref = await SharedPreferences.getInstance();
+              String id = pref.getString("id");
+              String password = pref.getString("password");
 
-              // Navigator.pushNamed(context, "/homepage");
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => HomePage("from login")));
+              if (idController.text == id && pdController.text == password) {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => HomePage("from login")));
+              } else {
+                showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                        content: Text("Sorry, ID and password did not match!!",
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold))));
+              }
             } else {
               showDialog(
                   barrierDismissible: true,
@@ -103,31 +128,35 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(padding: EdgeInsets.only(top: 50), child: logoBuilder()),
-          Padding(padding: EdgeInsets.only(top: 20), child: greeting()),
-          inputFieldBuilder("Esewa ID(Mobile/Email", controller: idController),
-          inputFieldBuilder("Password/MPIN", controller: pdController),
-          loginButton(context),
-          Center(
-            child: Padding(
-                padding: EdgeInsets.only(top: 20),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Registration()));
-                  },
-                  child: Text(
-                    "Register now",
-                    style: TextStyle(color: Colors.blue, fontSize: 18),
-                  ),
-                )),
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(padding: EdgeInsets.only(top: 50), child: logoBuilder()),
+            Padding(padding: EdgeInsets.only(top: 20), child: greeting()),
+            inputFieldBuilder("Esewa ID(Mobile/Emaile)",
+                isEmail: true, controller: idController),
+            inputFieldBuilder("Password/MPIN",
+                controller: pdController, isEmail: false),
+            loginButton(context),
+            Center(
+              child: Padding(
+                  padding: EdgeInsets.only(top: 20),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Registration()));
+                    },
+                    child: Text(
+                      "Register now",
+                      style: TextStyle(color: Colors.blue, fontSize: 18),
+                    ),
+                  )),
+            ),
+          ],
+        ),
       ),
     );
   }
