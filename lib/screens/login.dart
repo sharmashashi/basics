@@ -90,7 +90,7 @@ class LoginPage extends StatelessWidget {
 
               if (idController.text == id && pdController.text == password) {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => HomePage("from login")));
+                    builder: (context) => Home()));
               } else {
                 showDialog(
                     context: context,

@@ -201,7 +201,7 @@ class _RegistrationState extends State<Registration> {
           children: [
             Container(height: 150),
             greeting(),
-            inputFieldBuilder("Mobile Number",
+            inputFieldBuilder("Mobile Number/Email",
                 controller: mncontroller, isObscure: false),
             inputFieldBuilder("Passsword",
                 controller: fncontroller, isObscure: true),
