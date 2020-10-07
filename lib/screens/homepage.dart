@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firstproject/main.dart';
 import 'package:firstproject/screens/tabs/hometab.dart';
 import 'package:firstproject/screens/tabs/mypaymenttab.dart';
 import 'package:firstproject/screens/tabs/offerstab.dart';
@@ -27,7 +28,7 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.green.shade50,
         activeIcon: Icon(
           iconData,
-          color: Colors.green,
+          color: colorGreen,
         ),
         icon: Icon(
           iconData,
@@ -38,6 +39,7 @@ class _HomeState extends State<Home> {
 
   Widget navBar() {
     return BottomNavigationBar(
+
         onTap: (index) {
           setState(() {
             currentIndex = index;
@@ -45,14 +47,15 @@ class _HomeState extends State<Home> {
           });
         },
         currentIndex: currentIndex,
-        selectedItemColor: Colors.green,
+        selectedItemColor: colorGreen,
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
         selectedLabelStyle:
-            TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+            TextStyle(color: colorGreen, fontWeight: FontWeight.bold),
         items: [
           eachItem(title: "Home", iconData: Icons.home),
           eachItem(title: "Statements", iconData: Icons.description),
+          
           eachItem(title: "My Payment", iconData: Icons.assignment),
           eachItem(title: "Offers", iconData: Icons.monetization_on),
         ]);
@@ -89,13 +92,29 @@ class _HomeState extends State<Home> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
+        // bottomNavigationBar: BottomAppBar(
+        //   notchMargin: 10,
+        //   shape: CircularNotchedRectangle(),
+        //   child:Container(
+        //     color: Colors.transparent,
+        //     height: 50,
+        //   ) ,
+        // ),
         bottomNavigationBar: navBar(),
-        appBar: AppBar(
-          backgroundColor: Colors.green,
-          centerTitle: true,
-          leading: Container(),
-          title: Text("Home"),
+      
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: colorGreen,
+          child:ImageIcon(AssetImage("assets/qr.png")),
+          onPressed: (){},
+
         ),
+        // appBar: AppBar(
+        //   backgroundColor: Colors.green,
+        //   centerTitle: true,
+        //   leading: Container(),
+        //   title: Text("Home"),
+        // ),
         body: pages[pageIndex],
       ),
     );
