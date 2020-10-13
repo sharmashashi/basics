@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/state_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
@@ -13,41 +14,49 @@ class _HomeState extends State<Home> {
   Widget loading = Container();
   String response = "No response yet";
   List<Widget> items = List();
+
+  ViewController controller = ViewController();
+
   @override
   Widget build(BuildContext context) {
+    print("build method recalled");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.purple,
         title: Text("api consume"),
       ),
       body: ListView(
-        children: [
-          loading,
-          MaterialButton(
-            onPressed: () async {
-              setState(() {
-                loading = LinearProgressIndicator();
-              });
+            children: [
+              MaterialButton(
+                onPressed: () {
 
-              http.post(url).then((res) {
-                print(res.body);
-              });
+              
+                },
+                child: Text("show snackbar"),
+                color: Colors.blue,
+              ),
+              loading,
+              MaterialButton(
+                onPressed: () async {
+                  http.post(url).then((res) {
+                    print(res.body);
+                  });
 
-              List<Widget> temp = await getPost();
-              setState(() {
-                items = temp;
-                loading = Container();
-              });
-            },
-            child: Text("get"),
-            color: Colors.white,
+                  // List<Widget> temp = await getPost();
+
+                  controller.setResponse("Successfully updated");
+                },
+                child: Obx(()=>Text(controller.response),),
+                color: Colors.white,
+              ),
+
+             Obx(()=> Text(controller.response))
+              // Column(
+              //   crossAxisAlignment: CrossAxisAlignment.start,
+              //   children: items,
+              // )
+            ],
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: items,
-          )
-        ],
-      ),
     );
   }
 
@@ -83,5 +92,15 @@ class _HomeState extends State<Home> {
         ],
       ),
     );
+  }
+}
+
+class ViewController extends GetxController {
+  
+  RxString _response = "initial data".obs;
+
+  String get response => _response.value;
+  setResponse(String res) {
+    _response.value = res;
   }
 }
