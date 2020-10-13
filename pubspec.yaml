@@ -21,7 +21,8 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  toggle_switch: ^0.1.8
+  http: ^0.12.2
+  google_fonts: ^1.1.0
   flutter:
     sdk: flutter
 
