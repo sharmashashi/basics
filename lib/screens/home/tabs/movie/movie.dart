@@ -1,3 +1,4 @@
+import 'package:firstproject/screens/home/tabs/movie/genrewise/genre/genre.dart';
 import 'package:firstproject/screens/home/tabs/movie/genrewise/recommended_movies/recommended.dart';
 import 'package:firstproject/screens/home/tabs/movie/moviecontroller.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ class Movie extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
+    _movieController.setSelectedGenre = Recommended(screenSize.height - 130);
     return Container(
       width: screenSize.width,
       height: screenSize.height,
@@ -24,9 +26,10 @@ class Movie extends StatelessWidget {
             child: genres(screenSize),
           ),
           Positioned(
-            top: 130,
-            child: Recommended(screenSize.height - 130),
-          )
+              top: 130,
+              child: Obx(
+                () => _movieController.selectedGenre,
+              ))
         ],
       ),
     );
@@ -58,6 +61,13 @@ class Movie extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         _movieController.updateCurrentIndex(index);
+        if (index == 0) {
+          _movieController.setSelectedGenre =
+              Recommended(screenSize.height - 130);
+        } else {
+          _movieController.setSelectedGenre =
+              Genre(_movieController.movieGenres[index]);
+        }
       },
       child: Container(
           decoration: BoxDecoration(

@@ -2,6 +2,9 @@ import 'package:get/state_manager.dart';
 import 'package:flutter/material.dart';
 
 class MovieController extends GetxController {
+
+
+
   Color disableColor = Colors.grey;
   Color enableColor = Colors.blue;
   RxInt _currentIndex = 0.obs;
@@ -24,10 +27,16 @@ class MovieController extends GetxController {
     'Thriller'
   ];
 
-  Rx<Widget> _genrePage = wd().obs;
-  Widget get genrePage=>_genrePage.value;
-
   List<String> get movieGenres => _movieGenres;
+  Rx<Widget> _selectedGenre = wd().obs;
+  Widget get selectedGenre => _selectedGenre.value;
+  set setSelectedGenre(Widget wd) {
+    _selectedGenre.value = wd;
+  }
+
+  Rx<Widget> _genrePage = wd().obs;
+  Widget get genrePage => _genrePage.value;
+
 
   static Widget wd() => Container();
 }
