@@ -6,10 +6,15 @@ import 'package:get/get.dart';
 
 class Movie extends StatelessWidget {
   final MovieController _movieController = MovieController();
+  bool _init = false;
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    _movieController.setSelectedGenre = Recommended(screenSize.height - 130);
+    if (_init == false) {
+      _init = true;
+      _movieController.setSelectedGenre = Recommended(screenSize.height - 130);
+    }
+
     return Container(
       width: screenSize.width,
       height: screenSize.height,
@@ -65,8 +70,10 @@ class Movie extends StatelessWidget {
           _movieController.setSelectedGenre =
               Recommended(screenSize.height - 130);
         } else {
-          _movieController.setSelectedGenre =
-              Genre(_movieController.movieGenres[index]);
+          _movieController.setSelectedGenre = Genre(
+            genre: _movieController.movieGenres[index],
+            height: screenSize.height - 130,
+          );
         }
       },
       child: Container(
