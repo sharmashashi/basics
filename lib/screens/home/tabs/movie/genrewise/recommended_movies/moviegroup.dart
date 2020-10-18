@@ -1,6 +1,8 @@
+import 'package:firstproject/screens/home/moviedetails/moviedetails.dart';
 import 'package:firstproject/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get.dart';
 
 class MovieGroup extends StatelessWidget {
   final String movieGroup;
@@ -43,52 +45,58 @@ class MovieGroup extends StatelessWidget {
   }
 
   Widget eachMovie(Size screenSize) {
-    return Padding(
-      padding: EdgeInsets.only(right: 15.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(5),
-            child: Image.asset(
-              "assets/slider1.jpg",
-              height: screenSize.height * 0.15,
-              width: screenSize.height * 0.1,
-              fit: BoxFit.fill,
+    return GestureDetector(
+      onTap: () {
+        
+        Get.to(MovieDetails());
+      },
+      child: Padding(
+        padding: EdgeInsets.only(right: 15.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: Image.asset(
+                "assets/slider1.jpg",
+                height: screenSize.height * 0.15,
+                width: screenSize.height * 0.1,
+                fit: BoxFit.fill,
+              ),
             ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Text(
-            "Title",
-            style: TextStyle(color: Colors.white),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              RatingBar(
-                initialRating: 3.5,
-                allowHalfRating: true,
-                onRatingUpdate: (val) {},
-                itemBuilder: (ctx, index) {
-                  return Icon(
-                    Icons.star,
-                    color: Colors.amber.shade400,
-                  );
-                },
-                itemSize: 10,
-              ),
-              SizedBox(
-                width: 8,
-              ),
-              Text(
-                "3.5",
-                style: TextStyle(color: Colors.amber, fontSize: 10),
-              )
-            ],
-          )
-        ],
+            SizedBox(
+              height: 5,
+            ),
+            Text(
+              "Title",
+              style: TextStyle(color: Colors.white),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                RatingBar(
+                  initialRating: 3.5,
+                  allowHalfRating: true,
+                  onRatingUpdate: (val) {},
+                  itemBuilder: (ctx, index) {
+                    return Icon(
+                      Icons.star,
+                      color: Colors.amber.shade400,
+                    );
+                  },
+                  itemSize: 10,
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Text(
+                  "3.5",
+                  style: TextStyle(color: Colors.amber, fontSize: 10),
+                )
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

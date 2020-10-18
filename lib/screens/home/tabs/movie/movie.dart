@@ -1,6 +1,8 @@
+
 import 'package:firstproject/screens/home/tabs/movie/genrewise/genre/genre.dart';
 import 'package:firstproject/screens/home/tabs/movie/genrewise/recommended_movies/recommended.dart';
 import 'package:firstproject/screens/home/tabs/movie/moviecontroller.dart';
+import 'package:firstproject/screens/home/tabs/movie/searchdelegate/mysearchdelegate.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -24,7 +26,7 @@ class Movie extends StatelessWidget {
               top: 30,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: topBarBuilder(screenSize),
+                child: topBarBuilder(screenSize, context),
               )),
           Positioned(
             top: 80,
@@ -90,7 +92,7 @@ class Movie extends StatelessWidget {
     );
   }
 
-  Widget topBarBuilder(Size screenSize) {
+  Widget topBarBuilder(Size screenSize, BuildContext context) {
     return SizedBox(
       width: screenSize.width - 40,
       height: 50,
@@ -102,20 +104,22 @@ class Movie extends StatelessWidget {
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 26)),
-          searchButton(),
+          searchButton(context),
         ],
       ),
     );
   }
 
-  Widget searchButton() {
+  Widget searchButton(BuildContext context) {
     return FlatButton(
       padding: EdgeInsets.symmetric(
         vertical: 5,
         horizontal: 15,
       ),
       color: Colors.teal.shade900,
-      onPressed: () {},
+      onPressed: () {
+        showSearch(context: context, delegate: MySearchDelegate());
+      },
       child: Row(
         children: [
           Icon(
