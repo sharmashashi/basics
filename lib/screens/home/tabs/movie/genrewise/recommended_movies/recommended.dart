@@ -3,13 +3,14 @@ import 'dart:math';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firstproject/api/apis.dart';
 import 'package:firstproject/models/moviemodel.dart';
+import 'package:firstproject/screens/home/moviedetails/moviedetails.dart';
 import 'package:firstproject/screens/home/tabs/movie/genrewise/recommended_movies/moviegroup.dart';
 import 'package:firstproject/screens/home/tabs/movie/genrewise/recommended_movies/recommendedcontroller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class Recommended extends StatelessWidget {
-  RecommendedController _recommendedController = RecommendedController();
+  final RecommendedController _recommendedController = RecommendedController();
   final double height;
   Recommended(this.height);
   @override
@@ -21,8 +22,8 @@ class Recommended extends StatelessWidget {
         child: ListView(
           children: [
             _slider(screenSize),
-            MovieGroup("Popular"),
-            MovieGroup("Coming Soon"),
+            MovieGroup("Popular",sortBy:"rating"),
+            MovieGroup("Coming Soon",sortBy:"year"),
             SizedBox(
               height: 50,
             )
@@ -43,13 +44,17 @@ class Recommended extends StatelessWidget {
               rating: each['rating'],
               genres: each['genres'],
               description: each['description_full'],
-              coverImageUrl: each['small_cover_image'],
+              coverImageUrl: each['medium_cover_image'],
               runtime: each['runtime'],
               torrents: each['torrents']);
-
-          movieImages.add(Image.network(movie.coverImageUrl));
+          movieImages.add(GestureDetector(
+            onTap: () {
+              Get.to(MovieDetails(movie));
+            },
+            child: Image.network(movie.coverImageUrl,
+                fit: BoxFit.fitWidth, width: screenSize.width * 0.95),
+          ));
         }
-
         _recommendedController.setSliderItems = movieImages;
       } else {
         _recommendedController.setSliderItems = [
@@ -57,18 +62,20 @@ class Recommended extends StatelessWidget {
         ];
       }
     });
-    return Obx(() => Container(
-          height: height * 0.35,
-          width: screenSize.width,
-          color: Colors.white,
-          child: CarouselSlider(
-            items: _recommendedController.sliderItems,
-            options: CarouselOptions(
-                aspectRatio: 4 / 3,
-                onPageChanged: (index, reason) {},
-                autoPlay: true,
-                autoPlayAnimationDuration: Duration(seconds: 1)),
-          ),
-        ));
+    return Obx(
+      () => Container(
+        height: height * 0.35,
+        width: screenSize.width,
+        color: Colors.white,
+        child: CarouselSlider(
+          items: _recommendedController.sliderItems,
+          options: CarouselOptions(
+              aspectRatio: 4 / 3,
+              onPageChanged: (index, reason) {},
+              autoPlay: true,
+              autoPlayAnimationDuration: Duration(seconds: 1)),
+        ),
+      ),
+    );
   }
 }

@@ -1,7 +1,10 @@
+import 'package:firstproject/models/moviemodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class MovieDescription extends StatelessWidget {
+  final MovieModel movie;
+  MovieDescription(this.movie);
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -104,8 +107,6 @@ class MovieDescription extends StatelessWidget {
   }
 
   Widget description() {
-    String des =
-        "This is a lightweight web service, (REST interface), which provides an easy way to access the YTS website.An API (Application programming interface) is a protocol intended to be used as an interface by software components to communicate with each other.Our API supports many methods, so there should not be a problem coding some nice applications.If you find any bug, or have any questions, or any suggestions please get in touch with us";
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -118,7 +119,7 @@ class MovieDescription extends StatelessWidget {
           height: 15,
         ),
         Text(
-          des,
+          movie.getDescription,
           style: TextStyle(color: Colors.grey.shade700),
         )
       ],
@@ -126,18 +127,15 @@ class MovieDescription extends StatelessWidget {
   }
 
   Widget genreList(Size size) {
+    List _temp = List();
+    _temp.add(movie.getRuntime.toString() + " Minutes");
+    _temp.addAll(movie.getGenres);
     return Container(
       height: size.height * 0.05,
       child: ListView(
         physics: BouncingScrollPhysics(),
         scrollDirection: Axis.horizontal,
-        children: [
-          eachGenre("122 min"),
-          eachGenre("content"),
-          eachGenre("content"),
-          eachGenre("content"),
-          eachGenre("content"),
-        ],
+        children: [for (var each in _temp) eachGenre(each)],
       ),
     );
   }
@@ -162,7 +160,8 @@ class MovieDescription extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         RatingBar(
-          initialRating: 3.5,
+          ignoreGestures: true,
+          initialRating: double.parse(movie.getRating.toString()) / 2,
           allowHalfRating: true,
           onRatingUpdate: (val) {},
           itemBuilder: (ctx, index) {
@@ -177,7 +176,7 @@ class MovieDescription extends StatelessWidget {
           width: 15,
         ),
         Text(
-          "3.5",
+          movie.getRating.toString(),
           style: TextStyle(
               color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w600),
         )
@@ -187,7 +186,7 @@ class MovieDescription extends StatelessWidget {
 
   Text title() {
     return Text(
-      "Alita: Battle Angel",
+      movie.getTitle,
       style: TextStyle(
           color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
     );

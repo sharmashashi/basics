@@ -1,7 +1,10 @@
+import 'package:firstproject/models/moviemodel.dart';
 import 'package:firstproject/screens/home/moviedetails/moviedescription.dart';
 import 'package:flutter/material.dart';
 
 class MovieDetails extends StatelessWidget {
+  final MovieModel movie;
+  MovieDetails(this.movie);
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -23,7 +26,7 @@ class MovieDetails extends StatelessWidget {
             ),
             Positioned(
               top: screenSize.height * .45,
-              child: MovieDescription(),
+              child: MovieDescription(movie),
             )
           ],
         ),
@@ -37,11 +40,9 @@ class MovieDetails extends StatelessWidget {
       onPressed: () {},
       color: Colors.green,
       child: Row(
-        
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-
             Icons.file_download,
             color: Colors.white,
           ),
@@ -55,10 +56,11 @@ class MovieDetails extends StatelessWidget {
   }
 
   Widget movieImage(Size size) {
-    return Image.asset(
-      "assets/slider2.jpg",
+    return Image.network(
+      movie.getImageUrl,
       height: size.height * .6,
-      fit: BoxFit.fitHeight,
+      width: size.width,
+      fit: BoxFit.fitWidth,
     );
   }
 }
