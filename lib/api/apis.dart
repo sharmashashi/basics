@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
+import 'dart:math';
 
 class MovieAPI {
   static Future<Map<String, dynamic>> listMovies(
@@ -20,6 +21,18 @@ class MovieAPI {
       {@required int page, @required String sortBy}) async {
     String url =
         "https://yts.mx/api/v2/list_movies.json?limit=50&page=$page&sort_by=$sortBy";
+    Map<String, dynamic> returnBody = Map();
+
+    http.Response response = await http.get(url);
+    returnBody['statusCode'] = response.statusCode;
+    returnBody['response'] = _decodeJson(response);
+
+    return returnBody;
+  }
+
+  static Future<Map<String, dynamic>> movieByGenre(String genre) async {
+    String url =
+        "https://yts.mx/api/v2/list_movies.json?limit=50&genre=$genre";
     Map<String, dynamic> returnBody = Map();
 
     http.Response response = await http.get(url);

@@ -1,34 +1,66 @@
+import 'package:firstproject/api/apis.dart';
+import 'package:firstproject/models/moviemodel.dart';
+import 'package:firstproject/screens/home/moviedetails/moviedetails.dart';
+import 'package:firstproject/screens/home/tabs/movie/genrewise/genre/genrecontroller.dart';
 import 'package:firstproject/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get.dart';
 
 class Genre extends StatelessWidget {
   final double height;
   final String genre;
   Genre({@required this.genre, @required this.height});
+
+  final GenreController _genreController = GenreController();
+
+  _refresh(Size screenSize) async {
+    Map<String, dynamic> response =
+        await MovieAPI.movieByGenre(genre.toLowerCase());
+
+    if (response['statusCode'] == 200) {
+      List movieList = response['response']['data']['movies'];
+      List<Widget> movies = List();
+
+      for (Map<String, dynamic> each in movieList) {
+        MovieModel movie = MovieModel(
+            title: each['title_english'],
+            rating: each['rating'],
+            genres: each['genres'],
+            description: each['description_full'],
+            coverImageUrl: each['medium_cover_image'],
+            runtime: each['runtime'],
+            torrents: each['torrents']);
+        movies.add(GestureDetector(
+          onTap: () {
+            Get.to(MovieDetails(movie));
+          },
+          child: eachMovie(screenSize, movie),
+        ));
+      }
+      _genreController.setMovieList = movies;
+    } else {
+      _genreController.setMovieList = [
+        Center(child: Text("Error getting movies"))
+      ];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
+    _refresh(screenSize);
     return SizedBox(
-      height: height,
-      width: screenSize.width,
-      child: ListView(
-        children: [
-          eachMovie(screenSize),
-          eachMovie(screenSize),
-          eachMovie(screenSize),
-          eachMovie(screenSize),
-          eachMovie(screenSize),
-          eachMovie(screenSize),
-          eachMovie(screenSize),
-          eachMovie(screenSize),
-          eachMovie(screenSize)
-        ],
-      ),
-    );
+        height: height,
+        width: screenSize.width,
+        child: Obx(
+          () => ListView(
+            children: _genreController.movieList,
+          ),
+        ));
   }
 
-  Widget eachMovie(Size screenSize) {
+  Widget eachMovie(Size screenSize, MovieModel movie) {
     return Container(
       margin: EdgeInsets.only(top: 10),
       height: screenSize.height * 0.25,
@@ -55,14 +87,15 @@ class Genre extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Title",
+                          movie.title,
                           style: TextStyle(color: Colors.white),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             RatingBar(
-                              initialRating: 3.5,
+                              initialRating:
+                                  double.parse(movie.rating.toString()) / 2,
                               allowHalfRating: true,
                               onRatingUpdate: (val) {},
                               itemBuilder: (ctx, index) {
@@ -77,7 +110,7 @@ class Genre extends StatelessWidget {
                               width: 8,
                             ),
                             Text(
-                              "3.5",
+                              movie.rating.toString(),
                               style:
                                   TextStyle(color: Colors.amber, fontSize: 10),
                             )
@@ -86,8 +119,11 @@ class Genre extends StatelessWidget {
                         SizedBox(
                           height: 20,
                         ),
-                        Text("United State/3D"),
-                        Text("Director: First Last")
+                        Text(
+                          movie.runtime.toString() + " Min",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        // Text(movie.)
                       ],
                     ),
                   ),
@@ -99,8 +135,8 @@ class Genre extends StatelessWidget {
             left: screenSize.width * 0.12,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(5),
-              child: Image.asset(
-                "assets/slider1.jpg",
+              child: Image.network(
+                movie.coverImageUrl,
                 height: screenSize.height * 0.20,
                 width: screenSize.height * 0.15,
                 fit: BoxFit.cover,

@@ -76,6 +76,7 @@ class Movie extends StatelessWidget {
             genre: _movieController.movieGenres[index],
             height: screenSize.height - 130,
           );
+          
         }
       },
       child: Container(
