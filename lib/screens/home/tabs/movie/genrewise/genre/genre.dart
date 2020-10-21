@@ -24,6 +24,7 @@ class Genre extends StatelessWidget {
 
       for (Map<String, dynamic> each in movieList) {
         MovieModel movie = MovieModel(
+          id: each['id'],
             title: each['title_english'],
             rating: each['rating'],
             genres: each['genres'],

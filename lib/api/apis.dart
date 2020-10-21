@@ -1,3 +1,4 @@
+import 'package:firstproject/screens/home/moviedetails/moviedetails.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
@@ -31,8 +32,19 @@ class MovieAPI {
   }
 
   static Future<Map<String, dynamic>> movieByGenre(String genre) async {
+    String url = "https://yts.mx/api/v2/list_movies.json?limit=50&genre=$genre";
+    Map<String, dynamic> returnBody = Map();
+
+    http.Response response = await http.get(url);
+    returnBody['statusCode'] = response.statusCode;
+    returnBody['response'] = _decodeJson(response);
+
+    return returnBody;
+  }
+
+  static Future<Map<String, dynamic>> movieDetail(int movieId) async {
     String url =
-        "https://yts.mx/api/v2/list_movies.json?limit=50&genre=$genre";
+        "https://yts.mx/api/v2/movie_details.json?movie_id=$movieId&with_cast=true";
     Map<String, dynamic> returnBody = Map();
 
     http.Response response = await http.get(url);

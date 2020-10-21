@@ -1,14 +1,45 @@
+import 'package:firstproject/api/apis.dart';
+import 'package:firstproject/models/castmodel.dart';
 import 'package:firstproject/models/moviemodel.dart';
+import 'package:firstproject/screens/home/moviedetails/moviedescriptioncontroller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/state_manager.dart';
 
 class MovieDescription extends StatelessWidget {
+  final MovieDescriptionController _controller = MovieDescriptionController();
   final MovieModel movie;
   MovieDescription(this.movie);
+
+  _refresh(Size size) async {
+    Map<String, dynamic> response = await MovieAPI.movieDetail(movie.id);
+    if (response['statusCode'] == 200) {
+      List castingList = response['response']['data']['movie']['cast'];
+      List<Widget> personnelList = List();
+      for (Map<String, dynamic> each in castingList) {
+        try {
+          CastModel castModel = CastModel(
+              actorName: each['name'],
+              characterName: each['character_name'],
+              imageUrl: each['url_small_image']);
+          personnelList.add(personnelItem(size, castModel));
+        } catch (e) {
+          print(e);
+          continue;
+        }
+      }
+      _controller.setCastList = personnelList;
+    } else {
+      _controller.setCastList = [
+        Center(child: Text("Error getting casting details"))
+      ];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-
+    _refresh(screenSize);
     return Container(
       height: screenSize.height * 0.55,
       width: screenSize.width,
@@ -69,40 +100,45 @@ class MovieDescription extends StatelessWidget {
           ],
         ),
         Container(
-          alignment: Alignment.center,
-          height: size.height * .18,
-          child: ListView(
-            physics: BouncingScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            children: [
-              personnelItem(size),
-              personnelItem(size),
-              personnelItem(size),
-              personnelItem(size),
-              personnelItem(size),
-              personnelItem(size),
-              personnelItem(size),
-            ],
-          ),
-        )
+            alignment: Alignment.center,
+            height: size.height * .25,
+            child: Obx(
+              () => ListView(
+                physics: BouncingScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                children: _controller.castList,
+              ),
+            ))
       ],
     );
   }
 
-  Widget personnelItem(Size size) {
-    return Container(
-      margin: EdgeInsets.only(
-          top: size.height * 0.025, bottom: size.height * 0.025, right: 20),
-      height: size.height * .13,
-      width: size.height * .13,
-      decoration: BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
-      child: ClipRRect(
-        child: Image.asset(
-          "assets/slider1.jpg",
-          fit: BoxFit.cover,
+  Widget personnelItem(Size size, CastModel cast) {
+    return Column(
+      children: [
+        Container(
+          margin: EdgeInsets.only(
+              top: size.height * 0.025, bottom: size.height * 0.025, right: 20),
+          height: size.height * .13,
+          width: size.height * .13,
+          decoration: BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
+          child: ClipRRect(
+            child: Image.network(
+              cast.imageUrl == null
+                  ? "https://www.nicepng.com/png/detail/138-1388174_login-account-icon.png"
+                  : cast.imageUrl,
+              fit: BoxFit.cover,
+            ),
+            borderRadius: BorderRadius.circular(size.width),
+          ),
         ),
-        borderRadius: BorderRadius.circular(size.width),
-      ),
+        Text(cast.actorName,
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        Text(
+          "(${cast.characterName})",
+          style: TextStyle(color: Colors.grey.shade700),
+        )
+      ],
     );
   }
 

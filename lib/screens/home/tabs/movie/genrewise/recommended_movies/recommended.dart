@@ -22,8 +22,8 @@ class Recommended extends StatelessWidget {
         child: ListView(
           children: [
             _slider(screenSize),
-            MovieGroup("Popular",sortBy:"rating"),
-            MovieGroup("Coming Soon",sortBy:"year"),
+            MovieGroup("Popular", sortBy: "rating"),
+            MovieGroup("Coming Soon", sortBy: "year"),
             SizedBox(
               height: 50,
             )
@@ -40,6 +40,7 @@ class Recommended extends StatelessWidget {
         List<Widget> movieImages = List();
         for (Map<String, dynamic> each in movieList) {
           MovieModel movie = MovieModel(
+              id: each['id'],
               title: each['title_english'],
               rating: each['rating'],
               genres: each['genres'],

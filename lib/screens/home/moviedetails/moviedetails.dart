@@ -17,7 +17,12 @@ class MovieDetails extends StatelessWidget {
             movieImage(screenSize),
             Positioned(
               top: 25,
-              child: BackButton(),
+              child: Container(
+                margin: EdgeInsets.only(left: 10),
+                child: BackButton(),
+                decoration:
+                    BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+              ),
             ),
             Positioned(
               top: screenSize.height * 0.36,
