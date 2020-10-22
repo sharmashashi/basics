@@ -54,6 +54,17 @@ class MovieAPI {
     return returnBody;
   }
 
+  static Future<Map<String, dynamic>> movieSerch(String queryterm) async {
+    String url = "https://yts.mx/api/v2/list_movies.json?query_term=$queryterm";
+    Map<String, dynamic> returnBody = Map();
+
+    http.Response response = await http.get(url);
+    returnBody['statusCode'] = response.statusCode;
+    returnBody['response'] = _decodeJson(response);
+
+    return returnBody;
+  }
+
   static Map<String, dynamic> _decodeJson(http.Response rs) {
     return convert.jsonDecode(rs.body);
   }

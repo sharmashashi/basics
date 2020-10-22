@@ -1,4 +1,3 @@
-
 import 'package:firstproject/screens/home/tabs/movie/genrewise/genre/genre.dart';
 import 'package:firstproject/screens/home/tabs/movie/genrewise/recommended_movies/recommended.dart';
 import 'package:firstproject/screens/home/tabs/movie/moviecontroller.dart';
@@ -76,7 +75,6 @@ class Movie extends StatelessWidget {
             genre: _movieController.movieGenres[index],
             height: screenSize.height - 130,
           );
-          
         }
       },
       child: Container(
@@ -118,8 +116,10 @@ class Movie extends StatelessWidget {
         horizontal: 15,
       ),
       color: Colors.teal.shade900,
-      onPressed: () {
-        showSearch(context: context, delegate: MySearchDelegate());
+      onPressed: () async {
+        var result =
+            await showSearch(context: context, delegate: MySearchDelegate());
+       
       },
       child: Row(
         children: [
