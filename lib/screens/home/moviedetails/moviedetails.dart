@@ -5,6 +5,7 @@ import 'package:firstproject/screens/home/moviedetails/moviedescription.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MovieDetails extends StatelessWidget {
   final MovieModel movie;
@@ -62,8 +63,7 @@ class MovieDetails extends StatelessWidget {
       child: MaterialButton(
         shape: StadiumBorder(),
         onPressed: () async {
-          Directory dir = await getExternalStorageDirectory();
-          print(dir.path);
+          _download();
         },
         color: Colors.green,
         child: Row(
@@ -81,6 +81,24 @@ class MovieDetails extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _download() async {
+    //give storage permission from permission_handler
+    PermissionStatus status = await Permission.storage.request();
+    if (status == PermissionStatus.granted) {
+      print("granted");
+    } else if (status == PermissionStatus.denied) {
+      print("denied");
+    } else {
+      print(status);
+    }
+    //
+    Directory dir = await getExternalStorageDirectory();
+    String path = dir.parent.parent.parent.parent.path;
+    Directory downloadDir = await Directory(path + "/YtsMovies").create();
+    String downloadPath = downloadDir.path;
+    print(downloadPath);
   }
 
   Widget movieImage(Size size) {
