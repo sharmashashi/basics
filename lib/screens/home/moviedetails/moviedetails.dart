@@ -1,11 +1,13 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:firstproject/models/moviemodel.dart';
 import 'package:firstproject/screens/home/moviedetails/moviedescription.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class MovieDetails extends StatelessWidget {
   final MovieModel movie;
@@ -63,7 +65,7 @@ class MovieDetails extends StatelessWidget {
       child: MaterialButton(
         shape: StadiumBorder(),
         onPressed: () async {
-          _download();
+          _download(downloadUrl, quality);
         },
         color: Colors.green,
         child: Row(
@@ -83,22 +85,49 @@ class MovieDetails extends StatelessWidget {
     );
   }
 
-  _download() async {
+  _download(String url, String quality) async {
     //give storage permission from permission_handler
-    PermissionStatus status = await Permission.storage.request();
-    if (status == PermissionStatus.granted) {
-      print("granted");
-    } else if (status == PermissionStatus.denied) {
-      print("denied");
-    } else {
-      print(status);
-    }
+    // PermissionStatus status = await Permission.storage.request();
+    // if (status == PermissionStatus.granted) {
+    //   print("granted");
+    // } else if (status == PermissionStatus.denied) {
+    //   print("denied");
+    // } else {
+    //   print(status);
+    // }
     //
     Directory dir = await getExternalStorageDirectory();
-    String path = dir.parent.parent.parent.parent.path;
-    Directory downloadDir = await Directory(path + "/YtsMovies").create();
-    String downloadPath = downloadDir.path;
-    print(downloadPath);
+    String path = dir.path;
+    String downloadPath = path + "/torrents";
+    bool doesExist = await Directory(downloadPath).exists();
+    if (doesExist == false) {
+      await Directory(path + "/torrents").create();
+    }
+    // Directory downloadDir =
+    http.Response res = await http.Client().get(Uri.parse(url));
+    Uint8List bytes = res.bodyBytes;
+    File torrentFile =
+        File(downloadPath + "/${movie.getTitle}_$quality.torrent");
+    torrentFile.writeAsBytesSync(bytes);
+    Get.rawSnackbar(
+        borderRadius: 5,
+        messageText: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Download Complete"),
+            SizedBox(
+              width: 10,
+            ),
+            FaIcon(
+              FontAwesomeIcons.checkCircle,
+              color: Colors.green,
+            )
+          ],
+        ),
+        margin: EdgeInsets.all(10),
+        backgroundColor: Colors.white,
+        overlayColor: Colors.black26,
+        overlayBlur: 2);
   }
 
   Widget movieImage(Size size) {
