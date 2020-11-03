@@ -10,6 +10,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   TextEditingController _editingController = TextEditingController();
   String data = "Initial";
+  List<Widget> docsList = [SizedBox()];
   @override
   Widget build(BuildContext context) {
     Firebase.initializeApp();
@@ -41,11 +42,26 @@ class _HomeState extends State<Home> {
             child: Text("Read"),
             onPressed: () async {
               FirebaseFirestore ins = FirebaseFirestore.instance;
-              DocumentSnapshot snapshot =
-                  await ins.collection("message").doc("second").get();
-              String _data = snapshot.data().toString();
+              QuerySnapshot snapshot = await ins
+                  .collection("message")
+                  .orderBy("createdAt", descending: false)
+                  .get();
+              List<Widget> temp = List();
+              for (QueryDocumentSnapshot documentSnapshot in snapshot.docs) {
+                String val = documentSnapshot.data().toString();
+                temp.add(Container(
+                    padding: EdgeInsets.all(10),
+                    margin: EdgeInsets.all(20),
+                    color: Colors.purple,
+                    child: Text(val)));
+              }
+              ///
+              ///
+              ///
+              ///
+              // String _data = snapshot.data().toString();
               setState(() {
-                data = _data;
+                docsList = temp;
               });
             },
           ),
@@ -68,7 +84,9 @@ class _HomeState extends State<Home> {
               await ins.collection("message").doc("second").delete();
             },
           ),
-          Text("Data from firestore: $data")
+          Column(
+            children: docsList,
+          )
         ],
       ),
     );
