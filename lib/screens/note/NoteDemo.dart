@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -30,7 +31,9 @@ class _NoteDemoState extends State<NoteDemo> {
                     Map<String, dynamic> noteMap = documentList[index].data();
 
                     return _note(
-                        title: noteMap['title'], note: noteMap['note']);
+                        title: noteMap['title'],
+                        note: noteMap['note'],
+                        documentId: noteMap['docId']);
                   });
         },
       ),
@@ -72,16 +75,24 @@ class _NoteDemoState extends State<NoteDemo> {
 
   Future<bool> _addNoteToFirestore({String title, String note}) async {
     title = titleController.text;
+    bool ret = false;
+
     note = noteController.text;
     print(title);
     print(note);
+    String documentId = DateTime.now().toIso8601String();
     if (title != "" && note != "") {
-      await ins.collection('notes').add({"title": title, "note": note});
+      await ins
+          .collection('notes')
+          .doc(documentId)
+          .set({"title": title, "note": note, "docId": documentId});
       titleController.clear();
       noteController.clear();
       Navigator.pop(context);
-      return true;
+      ret = true;
     } else {}
+
+    return ret;
   }
 
   TextField _field({TextEditingController controller, String hint}) {
@@ -91,28 +102,33 @@ class _NoteDemoState extends State<NoteDemo> {
     );
   }
 
-  Widget _note({String title, String note}) {
-    return Card(
-      color: Colors.purple,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1,
-                  fontSize: 18),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Text(note)
-          ],
+  Widget _note({String title, String note, String documentId}) {
+    return GestureDetector(
+      onLongPress: () async {
+        ins.collection("notes").doc(documentId).delete();
+      },
+      child: Card(
+        color: Colors.purple,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                    fontSize: 18),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(note)
+            ],
+          ),
         ),
       ),
     );
