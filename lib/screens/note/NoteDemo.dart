@@ -1,6 +1,7 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firstproject/screens/note/add_note/add_note.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class NoteDemo extends StatefulWidget {
   @override
@@ -44,17 +45,18 @@ class _NoteDemoState extends State<NoteDemo> {
     return FloatingActionButton(
       backgroundColor: Colors.green,
       onPressed: () {
-        showDialog(
-            context: context,
-            builder: (context) => SimpleDialog(
-                  title: Text("Add Note"),
-                  children: [
-                    _field(controller: titleController, hint: "title"),
-                    _field(controller: noteController, hint: "note"),
-                    _addBtn(
-                        title: titleController.text, note: noteController.text)
-                  ],
-                ));
+        Get.to(AddNote());
+        // showDialog(
+        //     context: context,
+        //     builder: (context) => SimpleDialog(
+        //           title: Text("Add Note"),
+        //           children: [
+        //             _field(controller: titleController, hint: "title"),
+        //             _field(controller: noteController, hint: "note"),
+        //             _addBtn(
+        //                 title: titleController.text, note: noteController.text)
+        //           ],
+        //         ));
       },
       child: Icon(
         Icons.add,
