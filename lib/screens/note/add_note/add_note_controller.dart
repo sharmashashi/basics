@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firstproject/screens/note/note_model.dart';
-import 'package:get/state_manager.dart';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -45,13 +45,33 @@ class AddNoteController extends GetxController {
   ///
   ///
   addNote() async {
+    _progress(show: true);
     FirebaseFirestore ins = FirebaseFirestore.instance;
-    String _imageUrl = await _uploadImage();
+    String _imageUrl = "";
+    _imageUrl = await _uploadImage();
     NoteModel note = NoteModel(
         title: titleController.text,
         note: noteController.text,
         documentId: _docId,
         imageUrl: _imageUrl);
     await ins.collection("notes").doc(_docId).set(note.toMap());
+    _progress(show: false);
+  }
+
+  _progress({@required bool show}) {
+    if (show) {
+      Get.rawSnackbar(
+          duration: Duration(minutes: 5),
+          messageText: Text("Saving"),
+          backgroundColor: Colors.white,
+          margin: EdgeInsets.all(8),
+          overlayBlur: 4,
+          borderRadius: 10,
+          isDismissible: false,
+          overlayColor: Colors.black12);
+    } else {
+      if (Get.isSnackbarOpen) Get.back();
+      Get.back();
+    }
   }
 }
