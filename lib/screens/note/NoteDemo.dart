@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firstproject/screens/note/add_note/add_note.dart';
+import 'package:firstproject/screens/note/note_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -23,18 +24,20 @@ class _NoteDemoState extends State<NoteDemo> {
       body: StreamBuilder(
         stream: ins.collection("notes").snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          List<QueryDocumentSnapshot> documentList = snapshot.data.docs;
+          List<QueryDocumentSnapshot> documentList;
+          if (snapshot.hasData) documentList = snapshot.data.docs;
           return snapshot.hasData == false
               ? Text("no Data")
               : ListView.builder(
                   itemCount: documentList.length,
                   itemBuilder: (context, index) {
                     Map<String, dynamic> noteMap = documentList[index].data();
-
-                    return _note(
+                    NoteModel model = NoteModel(
                         title: noteMap['title'],
                         note: noteMap['note'],
-                        documentId: noteMap['docId']);
+                        documentId: noteMap['documentId'],
+                        imageUrl: noteMap['imageUrl']);
+                    return _note(model);
                   });
         },
       ),
@@ -104,31 +107,40 @@ class _NoteDemoState extends State<NoteDemo> {
     );
   }
 
-  Widget _note({String title, String note, String documentId}) {
+  Widget _note(NoteModel model) {
     return GestureDetector(
       onLongPress: () async {
-        ins.collection("notes").doc(documentId).delete();
+        ins.collection("notes").doc(model.documentId).delete();
       },
       child: Card(
         color: Colors.purple,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1,
-                    fontSize: 18),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    model.title,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                        fontSize: 18),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(model.note)
+                ],
               ),
-              SizedBox(
-                height: 10,
-              ),
-              Text(note)
+              Image.network(
+                model.imageUrl,
+                height: 100,
+              )
             ],
           ),
         ),

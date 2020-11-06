@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firstproject/screens/note/note_model.dart';
 import 'package:get/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,7 +15,7 @@ class AddNoteController extends GetxController {
   Rx<Widget> _imagePreview = widget().obs;
   Widget get imagePreview => _imagePreview.value;
 
-  String _imageUrl;
+  File imageFile;
 
   ///
   ///
@@ -22,20 +24,19 @@ class AddNoteController extends GetxController {
     PickedFile pickedFile =
         await ImagePicker().getImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      File imageFile = File(pickedFile.path);
+      imageFile = File(pickedFile.path);
       _imagePreview.value = Image.file(
         imageFile,
         height: 300,
       );
-      _imageUrl = await _uploadImage(imageFile);
     } else {}
   }
 
-  Future<String> _uploadImage(File image) async {
+  Future<String> _uploadImage() async {
     FirebaseStorage storage = FirebaseStorage.instance;
 
     StorageReference reference = storage.ref().child(_docId);
-    StorageUploadTask upTask = reference.putFile(image);
+    StorageUploadTask upTask = reference.putFile(imageFile);
     StorageTaskSnapshot snap = await upTask.onComplete;
     String url = await snap.ref.getDownloadURL();
     return url;
@@ -43,7 +44,14 @@ class AddNoteController extends GetxController {
 
   ///
   ///
-  addNote() {
-    
+  addNote() async {
+    FirebaseFirestore ins = FirebaseFirestore.instance;
+    String _imageUrl = await _uploadImage();
+    NoteModel note = NoteModel(
+        title: titleController.text,
+        note: noteController.text,
+        documentId: _docId,
+        imageUrl: _imageUrl);
+    await ins.collection("notes").doc(_docId).set(note.toMap());
   }
 }

@@ -45,7 +45,8 @@ class AddNote extends StatelessWidget {
       child: TextField(
         controller: controller,
         maxLines: hint == "Note" ? 5 : 1,
-        decoration: InputDecoration(hintText: hint, enabledBorder: border),
+        decoration: InputDecoration(
+            hintText: hint, enabledBorder: border, focusedBorder: border),
       ),
     );
   }
