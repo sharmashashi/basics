@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firstproject/keys.dart';
 import 'package:firstproject/screens/note/add_note/add_note.dart';
 import 'package:firstproject/screens/note/note_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class NoteDemo extends StatefulWidget {
   @override
@@ -13,6 +18,22 @@ class _NoteDemoState extends State<NoteDemo> {
   TextEditingController titleController = TextEditingController();
   TextEditingController noteController = TextEditingController();
   FirebaseFirestore ins = FirebaseFirestore.instance;
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+  @override
+  void initState() {
+    super.initState();
+    _firebaseMessaging.requestNotificationPermissions();
+    _firebaseMessaging.configure(
+        onMessage: (message) {},
+        onResume: (message) {
+          print(message);
+        });
+    // _firebaseMessaging.getToken().then((token) {
+
+    // });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,6 +132,38 @@ class _NoteDemoState extends State<NoteDemo> {
     return GestureDetector(
       onLongPress: () async {
         ins.collection("notes").doc(model.documentId).delete();
+
+        ///
+        ///
+        ///
+        FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+        await Future.delayed(Duration(seconds: 5));
+        await http.post(
+          'https://fcm.googleapis.com/fcm/send',
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'Authorization': 'key=$serverToken',
+          },
+          body: jsonEncode(
+            <String, dynamic>{
+              'notification': <String, dynamic>{
+                'body': 'Your note titled ${model.title} has been deleted',
+                'title': 'Warning'
+              },
+              'priority': 'high',
+              'data': <String, dynamic>{
+                'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                'id': '1',
+                'status': 'done'
+              },
+              'to': await firebaseMessaging.getToken(),
+            },
+          ),
+        );
+
+        ///
+        ///
+        ///
       },
       child: Card(
         color: Colors.purple,
