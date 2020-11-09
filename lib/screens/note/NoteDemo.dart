@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firstproject/keys.dart';
 import 'package:firstproject/screens/note/add_note/add_note.dart';
@@ -40,6 +41,7 @@ class _NoteDemoState extends State<NoteDemo> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text("Notes"),
+        actions: [_signoutBtn()],
       ),
       floatingActionButton: _floatingButton(context),
       body: StreamBuilder(
@@ -197,6 +199,18 @@ class _NoteDemoState extends State<NoteDemo> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  _signoutBtn() {
+    return IconButton(
+      onPressed: () {
+        FirebaseAuth.instance.signOut();
+      },
+      icon: Icon(
+        Icons.power_settings_new,
+        color: Colors.red,
       ),
     );
   }

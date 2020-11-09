@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firstproject/screens/note/add_note/add_note_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,6 +7,7 @@ class AddNote extends StatelessWidget {
   final AddNoteController addNoteController = AddNoteController();
   @override
   Widget build(BuildContext context) {
+    _displayCreds();
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -49,5 +51,14 @@ class AddNote extends StatelessWidget {
             hintText: hint, enabledBorder: border, focusedBorder: border),
       ),
     );
+  }
+
+  _displayCreds() async {
+    User user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      print(user.email);
+    } else {
+      print("Not signed in");
+    }
   }
 }
