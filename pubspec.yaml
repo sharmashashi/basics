@@ -28,6 +28,7 @@ dependencies:
   firebase_messaging: ^7.0.3
   firebase_auth: ^0.18.3
   get: 3.11.0
+  google_sign_in: 4.5.5
   http: any
 
   flutter:

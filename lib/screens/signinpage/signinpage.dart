@@ -3,6 +3,7 @@ import 'package:firstproject/screens/note/NoteDemo.dart';
 import 'package:firstproject/screens/signinpage/signuppage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class SigninPage extends StatelessWidget {
   TextEditingController emailController = TextEditingController();
@@ -32,6 +33,25 @@ class SigninPage extends StatelessWidget {
               child: Text("Sign In"),
             ),
             MaterialButton(
+              color: Colors.white,
+              onPressed: () {
+                _signinWithGoogle();
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("Signin"),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  ImageIcon(
+                    AssetImage("assets/google.png"),
+                    size: 20,
+                  )
+                ],
+              ),
+            ),
+            MaterialButton(
               color: Colors.green,
               onPressed: () {
                 Get.to(SignupPage());
@@ -56,5 +76,31 @@ class SigninPage extends StatelessWidget {
       print(e);
     }
     return retValue;
+  }
+
+  _signinWithGoogle() async {
+    FirebaseAuth ins = FirebaseAuth.instance;
+
+    GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly',
+      ],
+    );
+
+    try {
+      GoogleSignInAccount signInAccount = await _googleSignIn.signIn();
+      GoogleSignInAuthentication signInAuthentication =
+          await signInAccount.authentication;
+
+      OAuthCredential credential = GoogleAuthProvider.credential(
+          idToken: signInAuthentication.idToken,
+          accessToken: signInAuthentication.accessToken);
+
+      UserCredential userCreds = await ins.signInWithCredential(credential);
+      print(userCreds.user.email);
+    } catch (e) {
+      print(e);
+    }
   }
 }
