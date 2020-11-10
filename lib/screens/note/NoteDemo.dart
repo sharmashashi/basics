@@ -45,7 +45,8 @@ class _NoteDemoState extends State<NoteDemo> {
       ),
       floatingActionButton: _floatingButton(context),
       body: StreamBuilder(
-        stream: ins.collection("notes").snapshots(),
+        stream:
+            ins.collection(FirebaseAuth.instance.currentUser.email).snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           List<QueryDocumentSnapshot> documentList;
           if (snapshot.hasData) documentList = snapshot.data.docs;

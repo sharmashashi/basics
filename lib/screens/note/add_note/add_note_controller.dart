@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firstproject/screens/note/note_model.dart';
 import 'package:get/get.dart';
@@ -54,7 +55,10 @@ class AddNoteController extends GetxController {
         note: noteController.text,
         documentId: _docId,
         imageUrl: _imageUrl);
-    await ins.collection("notes").doc(_docId).set(note.toMap());
+    await ins
+        .collection(FirebaseAuth.instance.currentUser.email)
+        .doc(_docId)
+        .set(note.toMap());
     _progress(show: false);
   }
 
