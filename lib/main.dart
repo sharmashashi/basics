@@ -17,7 +17,7 @@ Future<void> _createDatabase() async {
   Database databaseRef =
       await openDatabase(path + "/my_db.db", onCreate: (db, version) async {
     String createQuery =
-        "CREATE TABLE time(hour TEXT, minute TEXT, seconds TEXT)";
+        "CREATE TABLE time(id INTEGER primary key autoincrement,hour TEXT, minute TEXT, seconds TEXT)";
     await db.execute(createQuery);
   }, version: 1);
 }
