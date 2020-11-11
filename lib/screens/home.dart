@@ -22,7 +22,8 @@ class _HomeState extends State<Home> {
             backgroundColor: Colors.red,
             onPressed: () async {
               Database db = await _database();
-              await db.delete("time", where: "id=?", whereArgs: [1]);
+              String sql = "DELETE FROM time WHERE id=?";
+              await db.rawDelete(sql, [5]);
             },
             child: Icon(Icons.delete),
           ),
@@ -31,15 +32,9 @@ class _HomeState extends State<Home> {
             backgroundColor: Colors.green,
             onPressed: () async {
               Database db = await _database();
-              await db.update(
-                  "time",
-                  {
-                    "hour": "updated hour",
-                    "minute": "updated",
-                    "seconds": "updated"
-                  },
-                  where: "id=?",
-                  whereArgs: [1]);
+              String sql =
+                  "UPDATE time SET hour=?,minute=?,seconds=? WHERE id=?";
+              await db.rawUpdate(sql, ["raw update value", "new", "new", 5]);
             },
             child: Icon(Icons.save),
           ),
@@ -47,8 +42,11 @@ class _HomeState extends State<Home> {
           FloatingActionButton(
             onPressed: () async {
               Database db = await _database();
-              List queryResult = await db.query("time");
+              // String sql = "SELECT * FROM time";
+              String sql = "SELECT id,seconds FROM time where id=?";
+              List queryResult = await db.rawQuery(sql, [6]);
               print(queryResult);
+              print(await db.query("time"));
             },
             child: Icon(Icons.list),
           ),
@@ -57,11 +55,13 @@ class _HomeState extends State<Home> {
             backgroundColor: Colors.green,
             onPressed: () async {
               Database db = await _database();
-              await db.insert("time", {
-                "hour": DateTime.now().hour.toString(),
-                "minute": DateTime.now().minute.toString(),
-                "seconds": DateTime.now().second.toString()
-              });
+              String sql =
+                  "INSERT INTO time(hour,minute,seconds) VALUES(?,?,? )";
+              db.rawInsert(sql, ["new insert", "new ", "new"]);
+
+              String alternativeSql =
+                  "INSERT INTO time(hour,minute,seconds) VALUES('new','new','new')";
+              db.rawInsert(alternativeSql);
             },
             child: Icon(Icons.add),
           ),
