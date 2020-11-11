@@ -1,78 +1,92 @@
-import 'dart:ffi';
+import 'dart:io';
 
+import 'package:firstproject/screens/add_note.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
-class Home extends StatefulWidget {
+class Notes extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _NotesState createState() => _NotesState();
 }
 
-class _HomeState extends State<Home> {
+class _NotesState extends State<Notes> {
+  List<Widget> _notes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchNotes();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Sqlite"),
-      ),
-      floatingActionButton: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FloatingActionButton(
-            backgroundColor: Colors.red,
-            onPressed: () async {
-              Database db = await _database();
-              String sql = "DELETE FROM time WHERE id=?";
-              await db.rawDelete(sql, [5]);
+        title: Text("you notes"),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.refresh,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              _fetchNotes();
             },
-            child: Icon(Icons.delete),
-          ),
-          SizedBox(width: 10),
-          FloatingActionButton(
-            backgroundColor: Colors.green,
-            onPressed: () async {
-              Database db = await _database();
-              String sql =
-                  "UPDATE time SET hour=?,minute=?,seconds=? WHERE id=?";
-              await db.rawUpdate(sql, ["raw update value", "new", "new", 5]);
-            },
-            child: Icon(Icons.save),
-          ),
-          SizedBox(width: 10),
-          FloatingActionButton(
-            onPressed: () async {
-              Database db = await _database();
-              // String sql = "SELECT * FROM time";
-              String sql = "SELECT id,seconds FROM time where id=?";
-              List queryResult = await db.rawQuery(sql, [6]);
-              print(queryResult);
-              print(await db.query("time"));
-            },
-            child: Icon(Icons.list),
-          ),
-          SizedBox(width: 10),
-          FloatingActionButton(
-            backgroundColor: Colors.green,
-            onPressed: () async {
-              Database db = await _database();
-              String sql =
-                  "INSERT INTO time(hour,minute,seconds) VALUES(?,?,? )";
-              db.rawInsert(sql, ["new insert", "new ", "new"]);
-
-              String alternativeSql =
-                  "INSERT INTO time(hour,minute,seconds) VALUES('new','new','new')";
-              db.rawInsert(alternativeSql);
-            },
-            child: Icon(Icons.add),
-          ),
+          )
         ],
       ),
-      body: Column(
-        children: [],
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () async {
+          var result = await Navigator.push(
+              context, MaterialPageRoute(builder: (context) => AddNote()));
+          _fetchNotes();
+        },
       ),
+      body: ListView(children: _notes),
     );
   }
 
-  Future<Database> _database() async =>
-      await openDatabase(await getDatabasesPath() + "/my_db.db");
+  _fetchNotes() async {
+    Database db = await openDatabase(await getDatabasesPath() + "/my_db.db");
+    List resultList = await db.query("note");
+    List<Widget> _tempList = List();
+    for (var each in resultList) {
+      _tempList.add(_noteWidget(each['title'], each['note'], each['image']));
+    }
+    setState(() {
+      _notes = _tempList;
+    });
+  }
+
+  Widget _noteWidget(String title, String note, String imagePath) {
+    return Container(
+      padding: EdgeInsets.all(10),
+      margin: EdgeInsets.all(10),
+      width: 300,
+      height: 150,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+                offset: Offset(1, 1),
+                blurRadius: 3,
+                spreadRadius: 1,
+                color: Colors.grey.shade300)
+          ]),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [Text(title), Text(note)],
+          ),
+          Image.file(File(imagePath))
+        ],
+      ),
+    );
+  }
 }

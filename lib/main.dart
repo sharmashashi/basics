@@ -7,10 +7,10 @@ void main() async {
 
   await _createDatabase();
 
-  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: Home()));
+  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: Notes()));
 }
 
-int databaseVersion = 1;
+int databaseVersion = 3;
 
 Future<void> _createDatabase() async {
   String path = await getDatabasesPath();
@@ -19,5 +19,15 @@ Future<void> _createDatabase() async {
     String createQuery =
         "CREATE TABLE time(id INTEGER primary key autoincrement,hour TEXT, minute TEXT, seconds TEXT)";
     await db.execute(createQuery);
-  }, version: 1);
+    String createNote =
+        "CREATE TABLE note(id INTEGER primary key autoincrement,title TEXT, note TEXT, image TEXT)";
+    await db.execute(createNote);
+  }, onUpgrade: (db, oldVersion, newVersion) async {
+    print(oldVersion);
+    print(newVersion);
+
+    String createQuery =
+        "CREATE TABLE note(id INTEGER primary key autoincrement,title TEXT, note TEXT, image TEXT)";
+    await db.execute(createQuery);
+  }, version: databaseVersion);
 }
