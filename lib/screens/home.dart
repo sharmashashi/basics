@@ -50,6 +50,16 @@ class _HomeState extends State<Home> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             GestureDetector(
+              onHorizontalDragEnd: (dragDetails) {
+                print(dragDetails.primaryVelocity);
+                print(dragDetails.velocity.pixelsPerSecond);
+
+                print("horizontalDragEnd");
+                if (dragDetails.primaryVelocity > 500)
+                  _showDialog(context, "Left to Right slide");
+                else if (dragDetails.primaryVelocity < -500)
+                  _showDialog(context, "Right to Left slide");
+              },
               onTap: () {
                 Navigator.push(
                     context, MaterialPageRoute(builder: (context) => Third()));
@@ -81,5 +91,9 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
+  }
+
+  _showDialog(BuildContext context, String text) {
+    showAboutDialog(context: context, applicationName: text);
   }
 }

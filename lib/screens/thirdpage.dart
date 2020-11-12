@@ -15,10 +15,15 @@ class _ThirdState extends State<Third> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 200),
+    );
 
-    animation = CurvedAnimation(parent: controller, curve: Curves.linear);
+    animation = CurvedAnimation(
+      parent: controller,
+      curve: Curves.linear,
+    );
     // controller.forward();
     controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
