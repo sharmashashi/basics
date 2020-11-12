@@ -45,51 +45,70 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GestureDetector(
-              onHorizontalDragEnd: (dragDetails) {
-                print(dragDetails.primaryVelocity);
-                print(dragDetails.velocity.pixelsPerSecond);
-
-                print("horizontalDragEnd");
-                if (dragDetails.primaryVelocity > 500)
-                  _showDialog(context, "Left to Right slide");
-                else if (dragDetails.primaryVelocity < -500)
-                  _showDialog(context, "Right to Left slide");
-              },
-              onTap: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Third()));
-              },
-              child: AnimatedContainer(
-                child: Text("I am a box"),
-                alignment: _alignment,
-                curve: Curves.easeInOutQuart,
-                decoration: BoxDecoration(color: _color),
-                duration: Duration(seconds: 1),
-                height: _height,
-                width: _width,
-              ),
-            ),
-            // GestureDetector(
-            //   onTap: () {
-            //     Navigator.push(context,
-            //         MaterialPageRoute(builder: (context) => SecondPage()));
-            //   },
-            //   child: Hero(
-            //     tag: "wifi",
-            //                   child: Image.asset(
-            //       "assets/wifi.png",
-            //       height: 100,
-            //     ),
-            //   ),
-            // )
-          ],
+      body: OrientationBuilder(
+        builder: (context, orientation) => Center(
+          child: orientation == Orientation.portrait
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _first(),
+                    _second(orientation)
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     Navigator.push(context,
+                    //         MaterialPageRoute(builder: (context) => SecondPage()));
+                    //   },
+                    //   child: Hero(
+                    //     tag: "wifi",
+                    //                   child: Image.asset(
+                    //       "assets/wifi.png",
+                    //       height: 100,
+                    //     ),
+                    //   ),
+                    // )
+                  ],
+                )
+              : Row(
+                  children: [_first(), _second(orientation)],
+                ),
         ),
       ),
+    );
+  }
+
+  _first() {
+    return GestureDetector(
+      onHorizontalDragEnd: (dragDetails) {
+        print(dragDetails.primaryVelocity);
+        print(dragDetails.velocity.pixelsPerSecond);
+
+        print("horizontalDragEnd");
+        if (dragDetails.primaryVelocity > 500)
+          _showDialog(context, "Left to Right slide");
+        else if (dragDetails.primaryVelocity < -500)
+          _showDialog(context, "Right to Left slide");
+      },
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Third()));
+      },
+      child: AnimatedContainer(
+        child: Text("I am a box"),
+        alignment: _alignment,
+        curve: Curves.easeInOutQuart,
+        decoration: BoxDecoration(color: _color),
+        duration: Duration(seconds: 1),
+        height: _height,
+        width: _width,
+      ),
+    );
+  }
+
+  _second(Orientation orientation) {
+    return Container(
+      height: orientation == Orientation.portrait ? 399 : 200,
+      width: orientation == Orientation.portrait ? 200 : 399,
+      color: Colors.blue,
     );
   }
 
