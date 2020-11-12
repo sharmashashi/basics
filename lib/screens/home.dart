@@ -1,4 +1,5 @@
 import 'package:firstproject/screens/secondpage.dart';
+import 'package:firstproject/screens/thirdpage.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -46,30 +47,36 @@ class _HomeState extends State<Home> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AnimatedContainer(
-              child: Text("I am a box"),
-              alignment: _alignment,
-              curve: Curves.easeInOutQuart,
-              decoration: BoxDecoration(color: _color),
-              duration: Duration(seconds: 1),
-              height: _height,
-              width: _width,
-            ),
             GestureDetector(
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SecondPage()));
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Third()));
               },
-              child: Hero(
-                tag: "wifi",
-                              child: Image.asset(
-                  "assets/wifi.png",
-                  height: 100,
-                ),
+              child: AnimatedContainer(
+                child: Text("I am a box"),
+                alignment: _alignment,
+                curve: Curves.easeInOutQuart,
+                decoration: BoxDecoration(color: _color),
+                duration: Duration(seconds: 1),
+                height: _height,
+                width: _width,
               ),
-            )
+            ),
+            // GestureDetector(
+            //   onTap: () {
+            //     Navigator.push(context,
+            //         MaterialPageRoute(builder: (context) => SecondPage()));
+            //   },
+            //   child: Hero(
+            //     tag: "wifi",
+            //                   child: Image.asset(
+            //       "assets/wifi.png",
+            //       height: 100,
+            //     ),
+            //   ),
+            // )
           ],
         ),
       ),
