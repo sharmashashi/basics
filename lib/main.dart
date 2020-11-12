@@ -1,10 +1,6 @@
-
-
-import 'package:firstproject/screens/settings.dart';
+import 'package:firstproject/screens/home.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: SettingsExample()));
+  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: Home()));
 }
